@@ -55,9 +55,18 @@ public class EndToEndScenario {
             System.out.println("Status code "+response.getStatusCode());
             System.out.println("Status code "+response.getBody().asString());
             AddPlaceResponse addPlaceResponse = response.getBody().as(AddPlaceResponse.class);
-
+             objectMapper.readValue(response.getBody().toString(),AddPlaceResponse.class);
             params.put("place_id", addPlaceResponse.getPlace_id());
-            response = RestAssured.given().spec(req).expect().defaultParser(Parser.JSON).log().all().when().get("/maps/api/place/get/json").then().spec(res).extract().response();
+            response = RestAssured
+                    .given()
+                        .spec(req)
+                        .expect()
+                        .defaultParser(Parser.JSON)
+                    .   log().all()
+                    .when()
+                        .get("/maps/api/place/get/json")
+                    .then()
+                        .spec(res).extract().response();
             JsonPath json1 = new JsonPath(response.getBody().asString());
            // Assert.assertEquals(json1.get("location.latitude"), addPlaceRequest.getLocation().getLatitude());
 
@@ -68,7 +77,7 @@ public class EndToEndScenario {
             updatePlaceRequest.setAddress("80 winter walk,");
             updatePlaceRequest.setTypes("shop");
             updatePlaceRequest.setKey("qaclick123");
-            response = RestAssured.given().spec(req).body(updatePlaceRequest).log().all().when().put("/maps/api/place/update/json").;
+            response = RestAssured.given().spec(req).body(updatePlaceRequest).log().all().when().put("/maps/api/place/update/json");
             Assert.assertEquals(response.getBody().jsonPath().getString("msg"), "Address successfully updated");
 
             response = RestAssured.given().spec(req).log().all().when().get("/maps/api/place/get/json");
